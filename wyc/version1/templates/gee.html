@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEE采集数据</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.21/esri/themes/light/main.css">
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&family=Open+Sans:wght@400;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
+    <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/tiny-slider.css">
+    <link rel="stylesheet" href="/static/css/glightbox.min.css">
+    <link rel="stylesheet" href="/static/css/aos.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://js.arcgis.com/4.21/"></script>
+    <style>
+        .left {
+            width: 45%;
+            height: 800px;
+            display: inline-block;
+            margin-left: 0px;
+            vertical-align: top;
+        }
+
+        .right {
+            width: 45%;
+            height: 800px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #viewDiv {
+            width: 100%;
+            height: 700px;
+        }
+
+        .smart-green {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 500px;
+            background: #F8F8F8;
+            padding: 30px 30px 20px 30px;
+            font: 12px Arial, Helvetica, sans-serif;
+            color: #666;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+        }
+
+        .smart-green h1 {
+            font: 24px "Trebuchet MS", Arial, Helvetica, sans-serif;
+            padding: 20px 0px 20px 40px;
+            display: block;
+            margin: -30px -30px 10px -30px;
+            color: #FFF;
+            background: cornflowerblue;
+            text-shadow: 1px 1px 1px #949494;
+            border-radius: 5px 5px 0px 0px;
+            -webkit-border-radius: 5px 5px 0px 0px;
+            -moz-border-radius: 5px 5px 0px 0px;
+            border-bottom: 1px solid cornflowerblue;
+        }
+
+        .smart-green h1 > span {
+            display: block;
+            font-size: 11px;
+            color: #FFF;
+        }
+
+        .smart-green label {
+            display: block;
+            margin: 0px 0px 5px;
+        }
+
+        .smart-green label > span {
+            float: left;
+            margin-top: 10px;
+            color: #5E5E5E;
+        }
+
+        .smart-green input[type="text"], .smart-green input[type="date"], .smart-green input[type="number"], .smart-green textarea, .smart-green select {
+            color: #555;
+            height: 30px;
+            line-height: 15px;
+            width: 100%;
+            padding: 0px 0px 0px 10px;
+            margin-top: 2px;
+            border: 1px solid #E5E5E5;
+            background: #FBFBFB;
+            outline: 0;
+            -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+            box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+            font: normal 14px/14px Arial, Helvetica, sans-serif;
+        }
+
+        .smart-green textarea {
+            height: 100px;
+            padding-top: 10px;
+        }
+
+        .button {
+            background-color: cornflowerblue;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-border-radius: 5px;
+            border: none;
+            padding: 10px 25px 10px 25px;
+            color: #FFF;
+            text-shadow: 1px 1px 1px #949494;
+        }
+
+        .button:hover {
+            background-color: cornflowerblue;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success-msg {
+            color: cornflowerblue;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* 设置显示的优先层级级别 */
+            z-index: 1234;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.9);
+            /* Black w/ opacity */
+        }
+
+        /* 设置弹出图片的样式 */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        /* 设置span标签的关闭按钮样式 */
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="site-mobile-menu site-navbar-target">
+    <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+            <span class="icofont-close js-menu-toggle"></span>
+        </div>
+    </div>
+    <div class="site-mobile-menu-body"></div>
+</div>
+<nav class="site-nav" style="background-image: url('/static/images/bkg.jpg');">
+    <div class="container">
+        <div class="site-navigation">
+            <a href="/" class="logo m-0 float-left">浙工大</a>
+            <ul class="js-clone-nav d-none d-lg-inline-block text-left site-menu float-right">
+                <li><a href="/api/v1/index">首页</a></li>
+                <li class="active"><a href="/api/v1/gee">数据采集</a></li>
+                <li><a href="/api/v1/userdb">用户数据库</a></li>
+                <li><a href="/api/v1/modelzoo">ModelZoo</a></li>
+                <li><a href="/api/v1/inference">推理任务</a></li>
+            </ul>
+            <a href="#"
+               class="burger ms-auto float-end site-menu-toggle js-menu-toggle d-inline-block d-lg-none light"
+               data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+        </div>
+    </div>
+</nav>
+<div style="margin-top: 100px">
+    <div class="left">
+        <form class="smart-green" id="smart-green">
+            <h1>采集信息
+                <span>请输入相应的信息.</span>
+            </h1>
+            <label>
+                <span>起始时间 :</span>
+                <input class="start_date" type="date" name="start_date" value="" placeholder="起始时间"/>
+            </label>
+            <label>
+                <span>终止时间 :</span>
+                <input type="date" name="end_date" value="" placeholder="终止时间"/>
+            </label>
+            <label>
+                <span>像素最小值 :</span>
+                <input type="number" name="min_pixel" value="" step="0.00000000001" placeholder="像素最小值"/>
+            </label>
+            <label>
+                <span>像素最大值 :</span>
+                <input type="number" name="max_pixel" value="" step="0.00000000001" placeholder="像素最大值"/>
+            </label>
+
+            <label>
+                <span>数据类型 :</span>
+                <input type="text" name="dataset" value="" placeholder="rgb或者sar"/>
+            </label>
+            <label>
+                <span>坐标点1 :</span>
+                <input type="number" name="lon1" value="" step="0.00000000001" placeholder="左上点经度"/>
+                <input type="number" name="lat1" value="" step="0.00000000001" placeholder="左上点纬度"/>
+            </label>
+            <label>
+                <span>坐标点2 :</span>
+                <input type="number" name="lon2" value="" step="0.00000000001" placeholder="右下点经度"/>
+                <input type="number" name="lat2" value="" step="0.00000000001" placeholder="右下点纬度"/>
+            </label>
+            <label>
+                <span>图像保存名称 :</span>
+                <input type="text" name="image_name" id="image_name" placeholder="xxx.jpg/jpeg/png"/>
+            </label>
+            <div class="success-msg"></div>
+            <label>
+                <span> </span>
+                <input id="submit" type="button" class="button" value="提交"/>
+            </label>
+        </form>
+    </div>
+
+    <div id="myModal" class="modal">
+        <!-- 关闭按钮 -->
+        <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+        <!-- 弹窗内容 -->
+        <!-- 属性设置为模态框 -->
+        <div style="display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; height: 350px;">
+            <img class="modal-content" id="img01" style="height: 256px; width: 256px">
+            <div>
+                <input type="button" value="保存到本地" class="button" id="save" onclick="downloadImg()">
+                <input type="button" value="保存到数据库" class="button" id="savetodb" onclick="post('0')">
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div>
+            <label for="basemapSelect">选择底图：</label>
+            <select id="basemapSelect">
+                <option value="topo">Topographic</option>
+                <option value="streets">Streets</option>
+                <option value="satellite">Satellite</option>
+                <option value="dark-gray">Dark Gray Canvas</option>
+                <option value="gray">Light Gray Canvas</option>
+                <option value="hybrid">Hybrid</option>
+            </select>
+            <button id="changeBasemap">更换底图</button>
+        </div>
+        <div id="viewDiv"></div>
+        <div id="coordinates"></div>
+    </div>
+</div>
+
+<script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/TextSymbol",
+        "dojo/on"
+    ], function (Map, MapView, Graphic, GraphicsLayer, TextSymbol, on) {
+        var map = new Map({
+            basemap: "topo"
+        });
+
+        var view = new MapView({
+            container: "viewDiv",
+            map: map,
+            center: [109.33, 34.04],
+            zoom: 12
+        });
+
+        // 创建一个用于显示标注的图层
+        var graphicsLayer = new GraphicsLayer();
+        map.add(graphicsLayer);
+
+        // 监听地图点击事件
+        on(view, "click", function (event) {
+            var longitude = event.mapPoint.longitude.toFixed(4);
+            var latitude = event.mapPoint.latitude.toFixed(4);
+            var coordinatesDiv = document.getElementById("coordinates");
+            coordinatesDiv.innerHTML = "经度：" + longitude + "，纬度：" + latitude;
+
+            // 创建标注的文本符号
+            var textSymbol = new TextSymbol({
+                text: "位置：" + longitude + ", " + latitude,
+                color: "black",
+                font: {
+                    size: 12,
+                    weight: "bold"
+                }
+            });
+
+            // 创建标注的图形
+            var graphic = new Graphic({
+                geometry: event.mapPoint,
+                symbol: textSymbol
+            });
+
+            // 将标注添加到图层
+            graphicsLayer.add(graphic);
+        });
+
+        // 获取底图选择元素和更换按钮
+        var basemapSelect = document.getElementById("basemapSelect");
+        var changeBasemapBtn = document.getElementById("changeBasemap");
+
+        // 监听更换按钮点击事件
+        changeBasemapBtn.addEventListener("click", function () {
+            var selectedBasemap = basemapSelect.value;
+            map.basemap = selectedBasemap;
+        });
+    });
+</script>
+<script>
+    const aa = document.getElementById('submit')
+    aa.addEventListener('click', function () {
+        var param = $("#smart-green").serializeArray()
+        console.log(param)
+        $.ajax({
+            url: "/api/v1/gee",
+            type: 'POST',
+            data: param,
+            dataType: "json",
+            success: function (arg) {
+                if (arg.status === 200) {
+                    SetImage(arg["imageurl"])
+                    document.getElementById("submit").onclick();
+                } else {
+                    alert(arg["msg"]);
+                }
+            },
+            error: function () {
+            }
+        });
+    })
+    function SetImage(url) {
+        // 获取DIV弹窗
+        var modal = document.getElementById('myModal');
+        // 获取图片插入到弹窗 - 使用 "alt" 属性作为文本部分的内容
+        var img = document.getElementById('submit');
+        var modalImg = document.getElementById("img01"); //获取弹出图片元素
+        var captionText = document.getElementById("caption"); //获得文本描述
+        img.onclick = function openImage() { //注册原图片点击事件
+            modal.style.display = "block"; //此元素将显示为块级元素，此元素前后会带有换行符。
+            modalImg.src = url; //将原图片URL赋给弹出图片元素
+        }
+        // 获取 <span> 元素，样式设置为关闭按钮
+        var span = document.getElementsByClassName("close")[0];
+        // 当点击 (x), 关闭弹窗
+        span.onclick = function () {
+            modal.style.display = "none"; //将模态框属性设置为不可见
+        }
+    }
+    function downloadImg() {
+        var image_name = document.getElementById("image_name").value
+        var img = document.getElementById('img01'); // 获取要下载的图片
+        var url = img.src;                            // 获取图片地址
+        var a = document.createElement('a');          // 创建一个a节点插入的document
+        var event = new MouseEvent('click')           // 模拟鼠标click点击事件
+        a.download = image_name                 // 设置a节点的download属性值
+        a.href = url;                                 // 将图片的src赋值给a节点的href
+        a.dispatchEvent(event)                        // 触发鼠标点击事件
+    }
+    function post(isoverwrite) {
+        var image_name = document.getElementById("image_name").value
+        var save_path = document.getElementById("img01").getAttribute("src")
+        $.ajax({
+            url: "/api/v1/addgee",    //
+            type: 'POST',             //
+            data: {'image_name': image_name, 'save_path': save_path, "isoverwrite": isoverwrite},         // 将数据传到后端
+            dataType: "json",             // 注意这个定义的是返回值的类型，不是发送数据的类型，如果返回类型不是json类型，则会进入error函数
+            success: function (arg) {     // 后端返回成功后的回调函数,data为后端传来的数据
+                if (arg.status === 200) {//处理成功  arg.status为后端返回的处理状态，值为success表示api处理成功
+                    alert("已保存，可在用户数据库页面查看");
+                } else if (arg.status === 3001) {
+                    var r = confirm("存在相同名称的图片，是否覆盖？")
+                    if (r === true) {
+                        post('1')
+                    } else {
+                        alert("请返回重新填写保存名称")
+                    }
+                }
+            },
+            error: function () {
+            }
+        });
+    }
+</script>
+</body>
+</html>
+

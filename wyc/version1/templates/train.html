@@ -1,0 +1,350 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&family=Open+Sans:wght@400;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
+    <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/tiny-slider.css">
+    <link rel="stylesheet" href="/static/css/glightbox.min.css">
+    <link rel="stylesheet" href="/static/css/aos.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/upload.css">
+    <link rel="stylesheet" href="/static/css/imgtest.css">
+    <script src="/static/js/tiff.js/tiff.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-treegrid/0.2.0/css/jquery.treegrid.min.css">
+    <title>模型训练</title>
+    <style>
+        /*模态框*/
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed; /* 根据浏览器定位 */
+            z-index: 1; /* 放在顶部 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 全宽 */
+            height: 100%; /* 全高 */
+            overflow: auto; /* 允许滚动 */
+            background-color: rgba(0, 0, 0, 0.4); /* 背景色 */
+        }
+
+        /*模态框内容*/
+        .modal-content {
+            display: flex; /*采用flexbox布局*/
+            flex-direction: column; /*垂直排列*/
+            position: relative;
+            background-color: #fefefe;
+            margin: 15% auto; /*距顶部15% 水平居中*/
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            animation: topDown 0.4s; /*自定义动画，从模态框内容上到下出现*/
+        }
+
+        @keyframes topDown {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        /*模态框头部*/
+        .modal-header {
+            display: flex; /*采用flexbox布局*/
+            flex-direction: row; /*水平布局*/
+            align-items: center; /*内容垂直居中*/
+            justify-content: space-between;
+        }
+
+        /*关闭X 样式*/
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<script src="http://i.gtimg.cn/qzone/biz/gdt/lib/jquery/jquery-2.1.4.js?max_age=31536000"></script>
+<body>
+<div class="site-mobile-menu site-navbar-target">
+    <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+            <span class="icofont-close js-menu-toggle"></span>
+        </div>
+    </div>
+    <div class="site-mobile-menu-body"></div>
+</div>
+<nav class="site-nav" style="background-image: url('/static/images/bkg.jpg');">
+    <div class="container">
+        <div class="site-navigation">
+            <a href="/" class="logo m-0 float-left">浙工大</a>
+
+            <ul class="js-clone-nav d-none d-lg-inline-block text-left site-menu float-right">
+                <li><a href="/api/v1/index">首页</a></li>
+                <li><a href="/api/v1/gee">数据采集</a></li>
+                <li><a href="/api/v1/userdb">用户数据库</a></li>
+                <li><a href="/api/v1/modelzoo">ModelZoo</a></li>
+                <li class="active"><a href="/api/v1/inference">推理任务</a></li>
+            </ul>
+
+            <a href="#" class="burger ms-auto float-end site-menu-toggle js-menu-toggle d-inline-block d-lg-none light"
+               data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+
+        </div>
+    </div>
+</nav>
+<div class="hero overlay" style="background-image: url('/static/images/轮播图背景.png');">
+
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mx-auto text-center">
+                <h1 class="heading text-white" data-aos="fade-up" data-aos-delay="0">去云去雾</h1>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="flexbox">
+    <h1 class="heading text-center fw-bold" data-aos="fade-up" data-aos-delay="0">为您提供一键式智能训练服务</h1>
+</div>
+
+<div class="container">
+    <h1>模型训练</h1>
+    <table id="table"></table>
+    <br/>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.12.0/extensions/treegrid/bootstrap-table-treegrid.js"></script>
+<script src="https://cdn.bootcss.com/jquery-treegrid/0.2.0/js/jquery.treegrid.min.js"></script>
+<script type="text/javascript">
+    var $table = $('#table');
+    var data = JSON.parse(
+        '[{"id":1,"pid":0,"status":2,"name":"去云去雾", "operate":1},' +
+        '{"id":2,"pid":0,"status":2,"name":"目标检测", "operate":1},' +
+        '{"id":4,"pid":1,"status":0,"name":"Edge-SAR Cloud Remove","permissionValue":"Sentinal-2"},'+
+        '{"id":5,"pid":1,"status":0,"name":"Edge-SAR Cloud Remove","permissionValue":"Gee_Data"},' +
+        '{"id":6,"pid":2,"status":2,"name":"OBBDetection", "operate":1},' +
+        '{"id":7,"pid":6,"status":0,"name":"ORiented-RCNN",        "permissionValue":"SSDD"},' +
+        '{"id":8,"pid":6,"status":0,"name":"ORiented-RCNN","permissionValue":"DOTA"},' +
+        '{"id":9,"pid":6,"status":0,"name":"H2RBOX",       "permissionValue":"SSDD"},' +
+        '{"id":10,"pid":2,"status":2,"name":"HBBDetection", "operate":1},' +
+        '{"id":11,"pid":10,"status":0,"name":"YOLOV8","permissionValue":"SSDD"},' +
+        '{"id":12,"pid":10,"status":0,"name":"YOLOV5","permissionValue":"DOTA"},' +
+        '{"id":13,"pid":10,"status":0,"name":"YOLOV5","permissionValue":"SSDD"}]');
+
+    $(function() {
+
+        //控制台输出一下数据
+        console.log(data);
+
+        $table.bootstrapTable({
+            data:data,
+            idField: 'id',
+            dataType:'jsonp',
+            columns: [
+                { field: 'check',  checkbox: true, formatter: function (value, row, index) {
+                        if (row.check == true) {
+                            // console.log(row.serverName);
+                            //设置选中
+                            return {  checked: true };
+                        }
+                    }
+                },
+                { field: 'name',  title: '模型' },
+                // {field: 'id', title: '编号', sortable: true, align: 'center'},
+                // {field: 'pid', title: '所属上级'},
+                { field: 'permissionValue', title: '数据集'  },
+                { field: 'status',  title: '状态', sortable: true,  align: 'center', formatter: 'statusFormatter'  },
+                { field: 'operate', title: '操作', align: 'center', events : operateEvents, formatter: 'operateFormatter' },
+            ],
+
+            //在哪一列展开树形
+            treeShowField: 'name',
+            //指定父id列
+            parentIdField: 'pid',
+
+            onResetView: function(data) {
+                //console.log('load');
+                $table.treegrid({
+                    initialState: 'collapsed',// 所有节点都折叠
+                    treeColumn: 1,
+                    onChange: function() {
+                        $table.bootstrapTable('resetWidth');
+                    }
+                });
+                //只展开树形的第一级节点
+                $table.treegrid('getRootNodes').treegrid('expand');
+
+            },
+            onCheck:function(row){
+                var datas = $table.bootstrapTable('getData');
+                // 勾选子类
+                selectChilds(datas,row,"id","pid",true);
+
+                // 勾选父类
+                selectParentChecked(datas,row,"id","pid")
+
+                // 刷新数据
+                $table.bootstrapTable('load', datas);
+            },
+
+            onUncheck:function(row){
+                var datas = $table.bootstrapTable('getData');
+                selectChilds(datas,row,"id","pid",false);
+                $table.bootstrapTable('load', datas);
+            },
+            // bootstrap-table-treetreegrid.js 插件配置 -- end
+        });
+    });
+
+    // 格式化按钮
+    function operateFormatter(value, row, index) {
+        if (value === 1){
+            return ['<span>-</span>'].join('')
+        }
+        return [
+            '<button type="button" class="RoleOfadd btn-small  btn-primary" style="margin-right:15px;"><i class="fa fa-plus" ></i>&nbsp;启动</button>',
+            '<button type="button" class="RoleOfedit btn-small   btn-primary" style="margin-right:15px;"><i class="fa fa-pencil-square-o" ></i>&nbsp;停止</button>',
+            '<button type="button" class="RoleOfdelete btn-small   btn-primary" style="margin-right:15px;"><i class="fa fa-trash-o" ></i>&nbsp;查看结果</button>'
+        ].join('');
+
+    }
+    // 格式化状态
+    function statusFormatter(value, row, index) {
+        if (value === 1) {
+            return '<span class="label label-success">运行中</span>';
+        } else if (value === 0){
+            return '<span class="label label-default">停止中</span>';
+        }else{
+            return '<span>-</span>';
+        }
+    }
+
+    //初始化操作按钮的方法
+    window.operateEvents = {
+        'click .RoleOfadd': function (e, value, row, index) {
+            add(row.id);
+        },
+        'click .RoleOfdelete': function (e, value, row, index) {
+            del(row.id);
+        },
+        'click .RoleOfedit': function (e, value, row, index) {
+            update(row.id);
+        }
+    };
+</script>
+<div class="site-footer">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="widget">
+                    <h3>关于我们<span class="text-primary"></span></h3>
+                    <p>一支有理想、有目标的团队！</p>
+                </div> <!-- /.widget -->
+                <div class="widget">
+                    <h3>联系我们</h3>
+                    <ul class="list-unstyled social">
+                        <li><a href="#"><span class="icon-instagram"></span></a></li>
+                        <li><a href="#"><span class="icon-twitter"></span></a></li>
+                        <li><a href="#"><span class="icon-facebook"></span></a></li>
+                        <li><a href="#"><span class="icon-linkedin"></span></a></li>
+                        <li><a href="#"><span class="icon-pinterest"></span></a></li>
+                        <li><a href="#"><span class="icon-dribbble"></span></a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+            <div class="col-lg-2 ml-auto">
+                <div class="widget">
+                    <h3>相关链接</h3>
+                    <ul class="list-unstyled float-left links">
+                        <li><a href="#">目标提取</a></li>
+                        <li><a href="#">变化检测</a></li>
+                        <li><a href="#">目标检测</a></li>
+                        <li><a href="#">地物分类</a></li>
+                        <li><a href="#">关于我们</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+            <div class="col-lg-2">
+                <div class="widget">
+                    <h3>Company</h3>
+                    <ul class="list-unstyled float-left links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+
+            <div class="col-lg-3">
+                <div class="widget">
+                    <h3>联系我们</h3>
+                    <address>地址：43 Raymouth Rd. Baltemoer, London 3910</address>
+                    <ul class="list-unstyled links mb-4">
+                        <li><a href="tel://11234567890">联系人：WYC</a></li>
+                        <li><a href="tel://11234567890">联系电话：13867143216</a></li>
+                        <li><a href="mailto:info@mydomain.com">邮箱：221122030381@zjut.edu.cn</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+        </div> <!-- /.row -->
+
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>document.write(new Date().getFullYear());</script>
+                    <i class="icon-heart text-danger"
+                       aria-hidden="true"></i>
+
+            </div>
+        </div>
+    </div> <!-- /.container -->
+</div> <!-- /.site-footer -->
+<!-- Preloader -->
+<div id="overlayer"></div>
+<div class="loader">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/tiny-slider.js"></script>
+<script src="/static/js/aos.js"></script>
+<script src="/static/js/navbar.js"></script>
+<script src="/static/js/counter.js"></script>
+<script src="/static/js/glightbox.min.js"></script>
+<script src="/static/js/custom.js"></script>
+</body>
+
+</html>

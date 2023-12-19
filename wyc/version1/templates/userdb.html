@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.0.min.js"></script>
+    <title>Userdb</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+<!--    <link rel="stylesheet" href="/static/css/modelzoo.css">-->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
+    <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.css">
+    <title>ZJUT</title>
+    <style>
+        .img_li {
+            list-style: none;
+            display: inline-block;
+            width: 20%; /*三列图片排列*/
+            text-align: center; /*内容居中*/
+            vertical-align: bottom; /*内容底部对齐*/
+        }
+        .content {
+            width: 80%;
+            padding: 0px 0;
+            /*overflow: hidden;*/
+        }
+        .img-wrap {
+            padding: 0px;
+            width: 256px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .clearfix_opt {
+            width: 100%;
+            margin: 0 auto;
+            font-size: 0;
+        }
+        .clearfix_res {
+            width: 100%;
+            margin: 0 auto;
+            font-size: 0;
+        }
+        .img-box {
+            height: 256px;
+            width: 256px;
+            /*overflow: hidden;*/
+        }
+        .img-box img {
+            position: relative;
+            width: 256px;
+            height: 256px;
+        }
+        .inference {
+            margin-top: 90px;
+        }
+        .clearfix_opt:after {
+            position: relative;
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+            clear: both;
+        }
+        .clearfix_res:after {
+            position: relative;
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+            clear: both;
+        }
+        .title {
+            padding-top: 12px;
+            font-size: 12px;
+            color: #454545;
+        }
+    </style>
+</head>
+<body onload="test()">
+
+<div class="site-mobile-menu site-navbar-target">
+    <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+            <span class="icofont-close js-menu-toggle"></span>
+        </div>
+    </div>
+    <div class="site-mobile-menu-body"></div>
+</div>
+<nav class="site-nav" style="background-image: url('/static/images/bkg.jpg');">
+    <div class="container">
+        <div class="site-navigation">
+            <a href="/" class="logo m-0 float-left">浙工大</a>
+            <ul class="js-clone-nav d-none d-lg-inline-block text-left site-menu float-right">
+                <li><a href="/api/v1/index">首页</a></li>
+                <li><a href="/api/v1/gee">数据采集</a></li>
+                <li class="active"><a href="/api/v1/userdb">用户数据库</a></li>
+                <li><a href="/api/v1/modelzoo">ModelZoo</a></li>
+                <li><a href="/api/v1/inference">推理任务</a></li>
+            </ul>
+            <a href="#"
+               class="burger ms-auto float-end site-menu-toggle js-menu-toggle d-inline-block d-lg-none light"
+               data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+
+<div class="inference">
+    <h1 class="lab">已做过推理的图片：</h1>
+    <h3>原图像：</h3>
+    <ul class="clearfix_opt" id="clearfix_opt">
+    </ul>
+
+    <h3>结果图：</h3>
+    <ul class="clearfix_res" id="clearfix_res">
+    </ul>
+</div>
+<div class="site-footer">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="widget">
+                    <h3>关于我们<span class="text-primary"></span></h3>
+                    <p>一支有理想、有目标的团队！</p>
+                </div> <!-- /.widget -->
+                <div class="widget">
+                    <h3>联系我们</h3>
+                    <ul class="list-unstyled social">
+                        <li><a href="#"><span class="icon-instagram"></span></a></li>
+                        <li><a href="#"><span class="icon-twitter"></span></a></li>
+                        <li><a href="#"><span class="icon-facebook"></span></a></li>
+                        <li><a href="#"><span class="icon-linkedin"></span></a></li>
+                        <li><a href="#"><span class="icon-pinterest"></span></a></li>
+                        <li><a href="#"><span class="icon-dribbble"></span></a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+            <div class="col-lg-2 ml-auto">
+                <div class="widget">
+                    <h3>相关链接</h3>
+                    <ul class="list-unstyled float-left links">
+                        <li><a href="#">目标提取</a></li>
+                        <li><a href="#">变化检测</a></li>
+                        <li><a href="#">目标检测</a></li>
+                        <li><a href="#">地物分类</a></li>
+                        <li><a href="#">关于我们</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+            <div class="col-lg-2">
+                <div class="widget">
+                    <h3>Company</h3>
+                    <ul class="list-unstyled float-left links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+
+            <div class="col-lg-3">
+                <div class="widget">
+                    <h3>联系我们</h3>
+                    <address>地址：43 Raymouth Rd. Baltemoer, London 3910</address>
+                    <ul class="list-unstyled links mb-4">
+                        <li><a href="tel://11234567890">联系人：WYC</a></li>
+                        <li><a href="tel://11234567890">联系电话：13867143216</a></li>
+                        <li><a href="mailto:info@mydomain.com">邮箱：221122030381@zjut.edu.cn</a></li>
+                    </ul>
+                </div> <!-- /.widget -->
+            </div> <!-- /.col-lg-3 -->
+
+        </div> <!-- /.row -->
+
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>document.write(new Date().getFullYear());</script>
+                    <i class="icon-heart text-danger"
+                       aria-hidden="true"></i>
+
+            </div>
+        </div>
+    </div> <!-- /.container -->
+</div> <!-- /.site-footer -->
+<!-- Preloader -->
+<div id="overlayer"></div>
+<div class="loader">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/tiny-slider.js"></script>
+<script src="/static/js/aos.js"></script>
+<script src="/static/js/navbar.js"></script>
+<script src="/static/js/counter.js"></script>
+<script src="/static/js/glightbox.min.js"></script>
+<script src="/static/js/custom.js"></script>
+</body>
+<script>
+    function test() {
+        $.ajax({
+            url: "/api/v1/getuserdbdata",//后台请求的数据
+            dataType: 'json', //数据格式
+            type: "get",//请求方式
+            success: function (data) {   //如果请求成功，返回数据。
+                // var gee_names = data.gee_names;
+                var image_names = data.image_names;
+                var res_names = data.res_names;
+                // var gee_paths = data.gee_paths;
+                var image_paths = data.image_paths;
+                var res_paths = data.res_paths;
+
+                var opt_part = document.getElementById("clearfix_opt");
+                for (var i = 0; i < image_names.length; i++) {
+                    //遍历
+                    var li = document.createElement('li')
+                    var div_title = document.createElement('div');
+                    var div2 = document.createElement('div');
+                    var div3 = document.createElement('div');
+                    var div4 = document.createElement('div');
+                    var img = document.createElement('img');
+                    img.src = image_paths[i];
+                    div4.className = "img-box";
+                    div4.appendChild(img);
+                    div3.className= "img-wrap";
+                    div3.appendChild(div4);
+                    div2.className = "content";
+                    div2.appendChild(div3);
+                    div_title.className= "title";
+                    div_title.innerHTML = image_names[i];
+                    div2.appendChild(div_title)
+                    li.className = "img_li";
+                    li.appendChild(div2)
+                    opt_part.appendChild(li);
+                }
+
+                var res_part = document.getElementById("clearfix_res");
+                for (var i = 0; i < res_names.length; i++) {
+                    //遍历
+                    li = document.createElement('li')
+                    div_title = document.createElement('div');
+                    div2 = document.createElement('div');
+                    div3 = document.createElement('div');
+                    div4 = document.createElement('div');
+                    img = document.createElement('img');
+                    img.src = res_paths[i];
+                    div4.className = "img-box";
+                    div4.appendChild(img);
+                    div3.className= "img-wrap";
+                    div3.appendChild(div4);
+                    div2.className = "content";
+                    div2.appendChild(div3);
+                    div_title.className= "title";
+                    div_title.innerHTML = res_names[i];
+                    div2.appendChild(div_title)
+                    li.className = "img_li";
+                    li.appendChild(div2)
+                    res_part.appendChild(li);
+                }
+            },
+            error: function (arg1) {
+                alert("加载数据失败");
+                console.log(arg1);
+            }
+        });
+
+    }
+</script>
+</html>
